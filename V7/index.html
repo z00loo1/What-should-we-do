@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#17271f">
+<title>What Should We Do?</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Arya">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3eee3; --ink:#182a20; --card:#fffdf8; --muted:#5f6a60; --line:#e2ddd0;
+  --shadow:0 10px 30px rgba(24,42,32,.08);
+  --display:"Fredoka",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.5}
+main{max-width:640px;margin:auto;padding:calc(16px + env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom))}
+
+/* ---- header + hero ---- */
+header{text-align:center;padding:6px 0 2px}
+h1{font-family:var(--display);font-weight:700;font-size:34px;line-height:1.02;letter-spacing:-.5px;margin:0}
+.tagline{color:var(--muted);font-size:14px;margin-top:4px;letter-spacing:.2px}
+.hero{position:relative;margin:16px 0 0;border-radius:20px;overflow:hidden;aspect-ratio:16/9;background:#d9d4c8}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* ---- balance meter (signature) ---- */
+.balance{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 14px 12px;margin-top:16px;box-shadow:var(--shadow)}
+.balance h2{font-family:var(--display);font-size:13px;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);margin:0 0 10px;font-weight:600}
+.bars{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;align-items:end;height:56px}
+.bar{display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.bar .col{width:100%;border-radius:7px 7px 3px 3px;min-height:6px;transition:height .5s ease}
+.bar .lbl{font-size:11px;color:var(--muted);font-weight:600}
+.nudge{margin-top:16px;font-size:14px;color:var(--ink);line-height:1.45}
+.nudge b{font-weight:700}
+.streak{display:flex;justify-content:center;gap:22px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.stat{text-align:center}
+.stat .n{font-family:var(--display);font-size:22px;font-weight:700;line-height:1}
+.stat .t{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+
+/* ---- mode toggle ---- */
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:18px 0 4px;background:#e7e1d4;padding:5px;border-radius:14px}
+.mode{border:0;background:transparent;padding:11px;border-radius:10px;font-family:var(--display);font-weight:600;font-size:15px;color:var(--muted);cursor:pointer}
+.mode.active{background:var(--card);color:var(--ink);box-shadow:0 2px 8px rgba(24,42,32,.1)}
+
+/* ---- filters ---- */
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+.filters select{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card);font:inherit;color:var(--ink)}
+
+.primary{width:100%;border:0;border-radius:16px;padding:18px;font-family:var(--display);font-weight:700;font-size:19px;background:var(--ink);color:#fff;margin:16px 0 4px;cursor:pointer;letter-spacing:.2px}
+.primary:active{transform:translateY(1px)}
+
+/* ---- activity card ---- */
+.card{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--cat,var(--ink));border-radius:18px;padding:20px;margin-top:16px;box-shadow:var(--shadow)}
+.reveal{animation:rise .32s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.chip{display:inline-block;background:var(--tint,#eee);color:var(--cat,var(--ink));font-weight:700;font-size:12px;padding:5px 11px;border-radius:999px;letter-spacing:.3px}
+.card h3{font-family:var(--display);font-weight:700;font-size:26px;line-height:1.05;margin:10px 0 0}
+.fav{border:1px solid var(--line);background:var(--card);width:42px;height:42px;flex:none;border-radius:12px;font-size:19px;cursor:pointer;line-height:1}
+.fav[aria-pressed="true"]{background:#fdecec;border-color:#f2c9c9}
+.badges{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 4px}
+.badge{background:#efece3;border-radius:999px;padding:5px 10px;font-size:13px;color:#4b544c}
+
+.supervision{margin:16px 0 4px;padding:12px 14px;border-radius:12px;border-left:4px solid var(--sv,#8a9);background:var(--svbg,#eef);font-size:14px}
+.supervision b{display:block;margin-bottom:2px}
+
+.label{font-family:var(--display);font-size:12px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);font-weight:600;margin-top:18px}
+.body{font-size:16px}
+.why{font-size:15px;color:#404a43;margin-top:6px}
+.steps{padding:0;margin:8px 0 0;list-style:none;counter-reset:step}
+.steps li{counter-increment:step;display:grid;grid-template-columns:28px 1fr;gap:11px;margin:12px 0;line-height:1.45}
+.steps li:before{content:counter(step);display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--cat,var(--ink));color:#fff;font-weight:700;font-size:13px;font-family:var(--display)}
+details{margin-top:14px;border-top:1px solid var(--line);padding-top:6px}
+summary{font-family:var(--display);font-size:12px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);font-weight:600;padding:8px 0;cursor:pointer;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary:after{content:" +";color:var(--cat,var(--muted))}
+details[open] summary:after{content:" –"}
+.tip{margin:8px 0;line-height:1.45;font-size:15px}
+.variations{display:grid;gap:9px;margin-top:4px}
+.variation{display:grid;grid-template-columns:64px 1fr;gap:11px;align-items:start;line-height:1.45;font-size:15px}
+.vtag{font-size:10px;font-weight:700;text-align:center;border-radius:6px;padding:5px 4px;background:var(--tint,#e9e5dc);color:var(--cat,var(--ink))}
+.meta{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);margin:18px -20px -20px}
+.meta div{text-align:center;padding:13px 4px;border-right:1px solid var(--line);font-weight:600;font-size:15px}
+.meta div:last-child{border-right:0}
+.meta small{display:block;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.8px;margin-top:3px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.secondary{border:1.5px solid var(--ink);background:transparent;border-radius:13px;padding:13px;font-family:var(--display);font-weight:600;font-size:15px;cursor:pointer;color:var(--ink)}
+.secondary:active{transform:translateY(1px)}
+
+/* ---- session ---- */
+.time-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;margin-top:16px;box-shadow:var(--shadow)}
+.time-card h3{font-family:var(--display);font-size:22px;margin:0 0 6px}
+.time-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.custom{display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:10px}
+.custom input{min-width:0;padding:13px;border:1px solid var(--line);border-radius:12px;background:#fff;font:inherit}
+.session-total{font-family:var(--display);font-size:24px;font-weight:700;margin:22px 0 2px}
+.session-item{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--cat,var(--ink));border-radius:16px;padding:16px 18px;margin-top:12px}
+.session-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.session-top h3{font-family:var(--display);margin:0;font-size:19px}
+.session-time{font-weight:700;white-space:nowrap;color:var(--muted)}
+.session-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}
+
+.empty{color:var(--muted);font-size:14px;text-align:center;margin-top:14px}
+a.link{color:var(--ink)}
+
+@media (prefers-reduced-motion: reduce){
+  *{scroll-behavior:auto!important}
+  .reveal{animation:none}
+  .bar .col{transition:none}
+}
+:focus-visible{outline:3px solid #2f6df6;outline-offset:2px;border-radius:6px}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>What Should We Do?</h1>
+  <div class="tagline">Arya · seeking side quests</div>
+  <div class="hero"><img src="arya-hero.jpg" width="1200" height="675" alt="Arya, ears up, ready for a quest"></div>
+</header>
+
+<section class="balance" aria-label="Arya's enrichment balance this week">
+  <h2>This week with Arya</h2>
+  <div class="bars" id="bars"></div>
+  <p class="nudge" id="nudge"></p>
+  <div class="streak">
+    <div class="stat"><div class="n" id="streakN">0</div><div class="t">day streak</div></div>
+    <div class="stat"><div class="n" id="totalN">0</div><div class="t">done total</div></div>
+    <div class="stat"><div class="n" id="favN">0</div><div class="t">favorites</div></div>
+  </div>
+</section>
+
+<div class="modes" role="tablist">
+  <button class="mode active" id="pickTab" role="tab" aria-selected="true">Pick one</button>
+  <button class="mode" id="planTab" role="tab" aria-selected="false">Plan a session</button>
+</div>
+
+<!-- PICK ONE -->
+<section id="pickPage">
+  <div class="filters">
+    <select id="fType" aria-label="Type of activity">
+      <option value="">Any type</option>
+      <option>Sniff</option><option>Think</option><option>Train</option><option>Play</option><option>Chill</option>
+    </select>
+    <select id="fTime" aria-label="Time available">
+      <option value="">Any length</option>
+      <option value="5">5 min</option><option value="10">10 min</option><option value="15">15 min</option><option value="20">20+ min</option>
+    </select>
+    <select id="fWhere" aria-label="Where">
+      <option value="">Inside or backyard</option><option>Inside</option><option>Backyard</option>
+    </select>
+    <select id="fFood" aria-label="Treats">
+      <option value="">Treats or no treats</option><option value="yes">Treats okay</option><option value="no">No treats</option>
+    </select>
+  </div>
+  <button class="primary" id="pickBtn">Pick something to do</button>
+  <div id="pickCard" aria-live="polite"></div>
+</section>
+
+<!-- PLAN A SESSION -->
+<section id="planPage" hidden>
+  <div class="time-card">
+    <h3>How much time do you have?</h3>
+    <p class="body">Arya gets a randomized mix that fits the time, spread across a few types.</p>
+    <div class="time-buttons">
+      <button class="secondary timepick" data-min="10">10 min</button>
+      <button class="secondary timepick" data-min="15">15 min</button>
+      <button class="secondary timepick" data-min="20">20 min</button>
+      <button class="secondary timepick" data-min="30">30 min</button>
+      <button class="secondary timepick" data-min="45">45 min</button>
+      <button class="secondary timepick" data-min="60">60 min</button>
+    </div>
+    <div class="custom">
+      <input id="customMin" type="number" min="5" max="120" step="5" inputmode="numeric" placeholder="Custom minutes">
+      <button class="secondary" id="customGo">Build it</button>
+    </div>
+  </div>
+  <div id="session" aria-live="polite"></div>
+</section>
+</main>
+
+<script src="activities.js"></script>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const K = { hist:"awsd.v7.history", recent:"awsd.v7.recent", liked:"awsd.v7.liked", base:"awsd.v7.base" };
+
+// ---- state (with one-time migration from the old v1–v6 keys) ----
+let history = load(K.hist, []);
+let recent  = load(K.recent, []);
+let liked   = new Set(load(K.liked, []));
+let base    = Number(localStorage.getItem(K.base));
+if (!localStorage.getItem(K.base)) {           // seed lifetime total from the old counter, once
+  base = Number(localStorage.getItem("completed") || 0);
+  localStorage.setItem(K.base, String(base));
+}
+function load(k, d){ try{ return JSON.parse(localStorage.getItem(k)) ?? d; }catch{ return d; } }
+function save(){ localStorage.setItem(K.hist,JSON.stringify(history)); localStorage.setItem(K.recent,JSON.stringify(recent)); localStorage.setItem(K.liked,JSON.stringify([...liked])); }
+
+const byId = id => ACTIVITIES.find(a => a.id === id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const dayKey = t => { const d=new Date(t); return d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate(); };
+
+// ---- balance + streak header ----
+function renderHeader(){
+  const now = Date.now(), WEEK = 7*864e5;
+  const counts = {}; CATEGORY_ORDER.forEach(c => counts[c]=0);
+  history.forEach(h => { if (now - new Date(h.t).getTime() < WEEK && counts[h.cat]!=null) counts[h.cat]++; });
+  const max = Math.max(1, ...Object.values(counts));
+  $("bars").innerHTML = CATEGORY_ORDER.map(c => {
+    const col = CATEGORIES[c].color, n = counts[c];
+    const h = 6 + Math.round((n/max)*44);
+    const faded = n===0 ? ";opacity:.28" : "";
+    return `<div class="bar"><div class="col" style="height:${h}px;background:${col}${faded}" title="${c}: ${n} this week"></div><div class="lbl">${c}</div></div>`;
+  }).join("");
+
+  const doneThisWeek = Object.values(counts).reduce((s,n)=>s+n,0);
+  const least = CATEGORY_ORDER.slice().sort((a,b)=>counts[a]-counts[b])[0];
+  $("nudge").innerHTML = doneThisWeek === 0
+    ? "Nothing yet this week — pick a quest and get Arya started."
+    : `Lightest on <b>${least}</b> lately. ${esc(CATEGORIES[least].blurb)}`;
+
+  $("streakN").textContent = streak();
+  $("totalN").textContent  = base + history.length;
+  $("favN").textContent    = liked.size;
+}
+function streak(){
+  if (!history.length) return 0;
+  const days = new Set(history.map(h => dayKey(h.t)));
+  let n = 0, d = new Date();
+  if (!days.has(dayKey(d))) d.setDate(d.getDate()-1);   // streak still counts if nothing done yet today
+  while (days.has(dayKey(d))) { n++; d.setDate(d.getDate()-1); }
+  return n;
+}
+
+// ---- single render path (used by both Pick one and Plan a session) ----
+function activityHTML(a, {compact=false}={}){
+  const badges = [`${a.minutes} min`, a.where, a.food?"Treats":"No treats", a.level, a.who]
+    .map(b => `<span class="badge">${esc(b)}</span>`).join("");
+  const svColor = {"🟢":"#5c8a3a","🟡":"#c58a1a","🔴":"#c0392b"}[a.rating];
+  const svBg    = {"🟢":"#eef4e6","🟡":"#fbf1dc","🔴":"#fbe7e4"}[a.rating];
+  const steps = a.instructions.map(s => `<li><span>${esc(s)}</span></li>`).join("");
+  const tips  = a.proTips.map(t => `<div class="tip">• ${esc(t)}</div>`).join("");
+  const vary = `<div class="variations">
+    <div class="variation"><span class="vtag">EASIER</span><span>${esc(a.easier)}</span></div>
+    <div class="variation"><span class="vtag">HARDER</span><span>${esc(a.harder)}</span></div>
+    <div class="variation"><span class="vtag">SENIOR</span><span>${esc(a.senior)}</span></div></div>`;
+
+  const heart = liked.has(a.id) ? "♥" : "♡";
+  const pressed = liked.has(a.id);
+  const head = `<div class="card-top">
+      <div><span class="chip">${esc(a.category)}</span><h3 id="pk-title">${esc(a.title)}</h3></div>
+      <button class="fav" data-fav="${a.id}" aria-pressed="${pressed}" aria-label="${pressed?'Remove from':'Add to'} Arya's favorites">${heart}</button>
+    </div>`;
+
+  const supervision = `<div class="supervision" style="--sv:${svColor};--svbg:${svBg}">
+      <b>${esc(a.ratingLabel)}</b>${esc(a.ratingNote)}</div>`;
+
+  const core = `${supervision}
+    <div class="label">You'll need</div><div class="body">${esc(a.gear)}</div>
+    <div class="label">How to play</div><ol class="steps">${steps}</ol>`;
+
+  const extras = compact
+    ? `<details><summary>Why it works, tips &amp; variations</summary>
+         <div class="why">${esc(a.why)}</div>${vary}${tips}</details>`
+    : `<div class="label">Why it works</div><div class="why">${esc(a.why)}</div>
+       <details><summary>Make it easier, harder, or senior-friendly</summary>${vary}</details>
+       <details><summary>Pro tips</summary>${tips}</details>`;
+
+  const meta = `<div class="meta"><div>${esc(a.level)}<small>Level</small></div><div>${esc(a.who)}<small>Who</small></div><div>${a.minutes} min<small>Time</small></div></div>`;
+
+  return { head, badges, core, extras, meta };
+}
+
+// ---- Pick one ----
+function filtered(){
+  let x = ACTIVITIES.slice();
+  const t=$("fTime").value, c=$("fType").value, w=$("fWhere").value, f=$("fFood").value;
+  if (t){ const n=+t; x=x.filter(a => n===20 ? a.minutes>=20 : a.minutes===n); }
+  if (c) x=x.filter(a => a.category===c);
+  if (w) x=x.filter(a => a.where===w);
+  if (f) x=x.filter(a => f==="yes" ? a.food : !a.food);
+  return x;
+}
+function weightedPick(pool){
+  const w = pool.map(a => liked.has(a.id) ? 3 : 1);   // favorites come up more often
+  let r = Math.random() * w.reduce((s,x)=>s+x,0);
+  for (let i=0;i<pool.length;i++){ r -= w[i]; if (r<0) return pool[i]; }
+  return pool[pool.length-1];
+}
+function pick(){
+  let pool = filtered();
+  if (!pool.length){ $("pickCard").innerHTML = `<p class="empty">Nothing matches those filters. Try widening one.</p>`; return; }
+  const fresh = pool.filter(a => !recent.includes(a.id));
+  if (fresh.length) pool = fresh;
+  show(mergeActivity(weightedPick(pool)));
+}
+function show(a){
+  const p = activityHTML(a);
+  $("pickCard").innerHTML = `<section class="card reveal" style="--cat:${a.color};--tint:${a.tint}">
+    ${p.head}<div class="badges">${p.badges}</div>${p.core}${p.extras}
+    <div class="actions"><button class="secondary" id="doneBtn">Arya did it 🐾</button><button class="secondary" id="anotherBtn">Pick another</button></div>
+    ${p.meta}</section>`;
+  $("doneBtn").onclick = () => { complete(a.id, a.category); pick(); };
+  $("anotherBtn").onclick = pick;
+  recent.push(a.id); recent = recent.slice(-12); save();
+  const h = $("pk-title"); if (h){ h.setAttribute("tabindex","-1"); h.focus({preventScroll:true}); }
+  $("pickCard").scrollIntoView({behavior:"smooth", block:"start"});
+}
+function complete(id, cat){
+  history.push({ t:new Date().toISOString(), id, cat });
+  save(); renderHeader();
+}
+
+// ---- Plan a session ----
+function buildSession(budget){
+  budget = Math.max(5, Math.min(120, Number(budget)||20));
+  let chosen=[], used=0, lastCat="";
+  while (true){
+    const remaining = budget - used;
+    let cands = ACTIVITIES.filter(a => a.minutes<=remaining && !chosen.some(x=>x.id===a.id));
+    if (!cands.length) break;
+    const varied = cands.filter(a => a.category!==lastCat);
+    if (varied.length) cands = varied;
+    const maxFit = Math.max(...cands.map(a=>a.minutes));
+    const good = cands.filter(a => a.minutes===maxFit || a.minutes>=Math.max(5, remaining-10));
+    const a = good[Math.floor(Math.random()*good.length)];
+    chosen.push(a); used += a.minutes; lastCat = a.category;
+    if (budget - used < 5) break;
+  }
+  const items = chosen.map((raw,i) => {
+    const a = mergeActivity(raw), p = activityHTML(a,{compact:true});
+    return `<div class="session-item" style="--cat:${a.color};--tint:${a.tint}">
+      <div class="session-top"><h3>${i+1}. ${esc(a.title)}</h3><div class="session-time">${a.minutes} min</div></div>
+      ${p.head.replace(/<h3[^>]*>.*?<\/h3>/,'')}
+      <div class="badges">${p.badges}</div>${p.core}${p.extras}</div>`;
+  }).join("");
+  $("session").innerHTML =
+    `<div class="session-total">${used}-minute session</div>
+     <p class="empty" style="text-align:left;margin:0">For a ${budget}-minute budget${used<budget?` · ${budget-used} min left open`:""}.</p>
+     ${items}
+     <div class="session-actions">
+       <button class="secondary" id="reroll">Shuffle again</button>
+       <button class="secondary" id="finish">We did it 🐾</button></div>`;
+  $("reroll").onclick = () => buildSession(budget);
+  $("finish").onclick = () => finishSession(chosen);
+  $("session").scrollIntoView({behavior:"smooth", block:"start"});
+}
+function finishSession(chosen){
+  chosen.forEach(a => history.push({ t:new Date().toISOString(), id:a.id, cat:a.category }));
+  save(); renderHeader();
+  $("session").innerHTML = `<div class="time-card"><h3>Nice work.</h3><p class="body">That's ${chosen.length} logged for Arya — a good mix of work and rest.</p></div>`;
+}
+
+// ---- favorites (event delegation so it works in both views) ----
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-fav]"); if (!b) return;
+  const id = Number(b.dataset.fav);
+  if (liked.has(id)) liked.delete(id); else liked.add(id);
+  const on = liked.has(id);
+  b.textContent = on ? "♥" : "♡";
+  b.setAttribute("aria-pressed", on);
+  b.setAttribute("aria-label", (on?"Remove from":"Add to")+" Arya's favorites");
+  save(); renderHeader();
+});
+
+// ---- mode switching ----
+function setMode(plan){
+  $("pickPage").hidden = plan; $("planPage").hidden = !plan;
+  $("pickTab").classList.toggle("active",!plan); $("planTab").classList.toggle("active",plan);
+  $("pickTab").setAttribute("aria-selected",!plan); $("planTab").setAttribute("aria-selected",plan);
+}
+$("pickTab").onclick = () => setMode(false);
+$("planTab").onclick = () => setMode(true);
+$("pickBtn").onclick = pick;
+document.querySelectorAll(".timepick").forEach(b => b.onclick = () => buildSession(b.dataset.min));
+$("customGo").onclick = () => buildSession($("customMin").value);
+
+renderHeader();
+
+if ("serviceWorker" in navigator){
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(()=>{}));
+}
+</script>
+</body>
+</html>
