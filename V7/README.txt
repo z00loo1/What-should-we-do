@@ -1,4 +1,4 @@
-WHAT SHOULD WE DO? — Arya enrichment app (v9)
+WHAT SHOULD WE DO? — Arya enrichment app (v10)
 
 FILES
 - index.html                 app (UI + logic)
@@ -81,3 +81,10 @@ Type explanations
   label, plus a "?" button by the "This week with Arya" heading. Tapping either opens a
   short legend explaining what each type means for Arya; tapping a specific label
   highlights that one. Only index.html and sw.js changed (cache bumped to arya-v9).
+
+WHAT CHANGED FROM V9
+
+Fix
+- The type legend was showing by default and the "?" button did nothing: a CSS rule was
+  overriding the hide. The legend now starts collapsed and the "?" (and each label)
+  opens and closes it correctly. Only index.html and sw.js changed (cache -> arya-v10).
