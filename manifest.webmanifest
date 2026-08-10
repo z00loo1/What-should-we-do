@@ -1,0 +1,8 @@
+{
+  "name": "What Should We Do?",
+  "short_name": "Arya",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4f0e7",
+  "theme_color": "#18241d"
+}
