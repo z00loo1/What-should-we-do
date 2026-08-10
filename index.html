@@ -149,5 +149,9 @@ $('customGo').onclick=()=>buildSession($('customMinutes').value);
 
 function stats(){$('stats').textContent=completed?`Arya activities completed on this phone: ${completed}`:"50 original enrichment activities for Arya";}
 stats();
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+if('serviceWorker' in navigator){
+ navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(reg=>{
+   reg.update();
+ });
+}
 </script></body></html>
