@@ -1,4 +1,4 @@
-WHAT SHOULD WE DO? — Arya enrichment app (v8)
+WHAT SHOULD WE DO? — Arya enrichment app (v9)
 
 FILES
 - index.html                 app (UI + logic)
@@ -73,3 +73,11 @@ Notes
   bumped to arya-v8 so the update rolls out on next launch.
 - Her existing data — streak, favorites, totals, and history — carries straight over;
   nothing is reset.
+
+WHAT CHANGED FROM V8
+
+Type explanations
+- The five type bars (Sniff / Think / Train / Play / Chill) now have a small "?" on each
+  label, plus a "?" button by the "This week with Arya" heading. Tapping either opens a
+  short legend explaining what each type means for Arya; tapping a specific label
+  highlights that one. Only index.html and sw.js changed (cache bumped to arya-v9).

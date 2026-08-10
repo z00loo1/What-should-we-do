@@ -2,7 +2,7 @@
 // Strategy: stale-while-revalidate. Serve from cache instantly for a fast launch,
 // fetch a fresh copy in the background, and use it on the next load. This avoids the
 // v1 "trapped on an old version" problem without making every launch wait on the network.
-const CACHE = 'arya-v8';
+const CACHE = 'arya-v9';
 const SHELL = [
   './', './index.html', './activities.js', './manifest.webmanifest',
   './arya-hero.jpg', './icon-192.png', './icon-512.png',

@@ -57,11 +57,20 @@ h1{font-family:var(--display);font-weight:700;font-size:34px;line-height:1.02;le
 
 /* balance meter */
 .balance{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 14px 12px;margin-top:16px;box-shadow:var(--shadow)}
-.balance h2{font-family:var(--display);font-size:13px;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);margin:0 0 10px;font-weight:600}
+.bhead{display:flex;justify-content:space-between;align-items:center;margin:0 0 10px}
+.balance h2{font-family:var(--display);font-size:13px;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);margin:0;font-weight:600}
+.help{border:1px solid var(--line);background:var(--card);color:var(--muted);width:24px;height:24px;border-radius:50%;font-size:13px;font-weight:700;cursor:pointer;line-height:1;font-family:var(--display);flex:none;padding:0}
+.help[aria-expanded="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .bars{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;align-items:end;height:56px}
 .bar{display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
 .bar .col{width:100%;border-radius:7px 7px 3px 3px;min-height:6px;transition:height .5s ease}
-.bar .lbl{font-size:11px;color:var(--muted);font-weight:600}
+.bar .lbl{font-family:inherit;font-size:11px;color:var(--muted);font-weight:600;background:none;border:0;padding:2px 0;cursor:pointer;display:inline-flex;align-items:baseline}
+.bar .lbl .q{font-size:8px;font-weight:700;vertical-align:super;margin-left:1px;color:var(--cat-q,var(--muted));opacity:.75}
+.legend{margin-top:14px;display:grid;gap:6px}
+.legend .row{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:start;font-size:13px;line-height:1.4;padding:3px 6px;border-radius:8px;margin:0 -6px}
+.legend .row.active{background:var(--seg)}
+.legend .sw{width:11px;height:11px;border-radius:3px;margin-top:3px}
+.legend b{color:var(--ink)}
 .nudge{margin-top:16px;font-size:14px;color:var(--ink);line-height:1.45}
 .nudge b{font-weight:700}
 .streak{display:flex;justify-content:center;gap:22px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
@@ -176,8 +185,12 @@ details[open] summary:after{content:" –"}
 </header>
 
 <section class="balance" aria-label="Arya's enrichment balance this week">
-  <h2>This week with Arya</h2>
+  <div class="bhead">
+    <h2>This week with Arya</h2>
+    <button class="help" id="balanceHelp" aria-expanded="false" aria-controls="balanceLegend" aria-label="What do these five types mean?">?</button>
+  </div>
   <div class="bars" id="bars"></div>
+  <div class="legend" id="balanceLegend" hidden></div>
   <p class="nudge" id="nudge"></p>
   <div class="streak">
     <div class="stat"><div class="n" id="streakN">0</div><div class="t">day streak</div></div>
@@ -284,6 +297,24 @@ let theme = localStorage.getItem("awsd.theme") || (matchMedia("(prefers-color-sc
 applyTheme(theme);
 themeBtn.onclick = () => { theme = theme==="dark" ? "light" : "dark"; localStorage.setItem("awsd.theme", theme); applyTheme(theme); };
 
+// ---- "what do these mean?" legend for the five types ----
+const legendEl = $("balanceLegend"), helpBtn = $("balanceHelp");
+legendEl.innerHTML = CATEGORY_ORDER.map(c =>
+  `<div class="row" data-cat="${c}"><span class="sw" style="background:${CATEGORIES[c].color}"></span><span><b>${c}</b> — ${esc(CATEGORIES[c].blurb)}</span></div>`
+).join("");
+let legendOpen = false;
+function setLegend(open, cat){
+  legendOpen = open;
+  legendEl.hidden = !open;
+  helpBtn.setAttribute("aria-expanded", open);
+  legendEl.querySelectorAll(".row").forEach(r => r.classList.toggle("active", open && r.dataset.cat===cat));
+}
+helpBtn.onclick = () => setLegend(!legendOpen, null);
+$("bars").addEventListener("click", e => {
+  const b = e.target.closest(".lbl"); if (!b) return;
+  setLegend(true, b.dataset.cat);
+});
+
 // ---- balance + streak header ----
 function renderHeader(){
   const now = Date.now(), WEEK = 7*864e5;
@@ -294,7 +325,7 @@ function renderHeader(){
     const col = CATEGORIES[c].color, n = counts[c];
     const h = 6 + Math.round((n/max)*44);
     const faded = n===0 ? ";opacity:.28" : "";
-    return `<div class="bar"><div class="col" style="height:${h}px;background:${col}${faded}" title="${c}: ${n} this week"></div><div class="lbl">${c}</div></div>`;
+    return `<div class="bar"><div class="col" style="height:${h}px;background:${col}${faded}" title="${c}: ${n} this week"></div><button class="lbl" data-cat="${c}" style="--cat-q:${col}">${c}<span class="q" aria-hidden="true">?</span></button></div>`;
   }).join("");
   const doneThisWeek = Object.values(counts).reduce((s,n)=>s+n,0);
   const least = CATEGORY_ORDER.slice().sort((a,b)=>counts[a]-counts[b])[0];
