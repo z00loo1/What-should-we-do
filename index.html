@@ -9,7 +9,7 @@
 :root{--bg:#f4f0e7;--ink:#18241d;--card:#fffdf8;--muted:#69736d;--line:#d8d4ca}
 *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
 main{max-width:720px;margin:auto;padding:calc(22px + env(safe-area-inset-top)) 18px calc(30px + env(safe-area-inset-bottom))}
-header{text-align:center;padding:18px 0 10px} h1{font-size:38px;line-height:1;margin:0 0 8px;letter-spacing:-1.5px} .sub{color:var(--muted)}
+header{text-align:center;padding:18px 0 10px}.arya-hero{position:relative;margin:20px 0 4px;border-radius:22px;overflow:hidden;aspect-ratio:16/9;background:#ddd}.arya-hero img{width:100%;height:100%;object-fit:cover;display:block}.arya-hero:after{content:"";position:absolute;inset:55% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.58));pointer-events:none}.hero-label{position:absolute;z-index:1;left:16px;bottom:13px;color:white;font-size:12px;font-weight:850;letter-spacing:1.1px;text-shadow:0 1px 4px #000} h1{font-size:38px;line-height:1;margin:0 0 8px;letter-spacing:-1.5px} .sub{color:var(--muted)}
 button,select{font:inherit}.primary{width:100%;border:0;border-radius:18px;padding:18px;font-weight:800;font-size:19px;background:var(--ink);color:white;margin:18px 0}
 .filters{display:grid;grid-template-columns:1fr 1fr;gap:10px}.filters select{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px;margin-top:18px;box-shadow:0 6px 22px #0000000a}
@@ -25,7 +25,9 @@ h2{font-size:29px;margin:0}.label{font-size:12px;text-transform:uppercase;letter
 </style>
 </head>
 <body><main>
-<header><h1>What Should We Do?</h1><div class="sub">Arya needs something to do.</div></header>
+<header><h1>What Should We Do?</h1><div class="sub">Arya needs something to do.</div>
+<div class="arya-hero"><img src="arya-hero.jpg" alt="Arya"><div class="hero-label">ARYA • SEEKING SIDE QUESTS</div></div>
+</header>
 <div class="mode-nav">
 <button class="mode active" id="browseMode">Activity Picker</button>
 <button class="mode" id="timeMode">Fill My Time</button>
