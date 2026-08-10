@@ -13,26 +13,49 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<script>
+  // Set the theme before first paint to avoid a flash of the wrong mode.
+  (function(){
+    try{
+      var t = localStorage.getItem("awsd.theme");
+      if(!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", t);
+    }catch(e){}
+  })();
+</script>
 <style>
 :root{
   --bg:#f3eee3; --ink:#182a20; --card:#fffdf8; --muted:#5f6a60; --line:#e2ddd0;
+  --seg:#e7e1d4; --btn:#182a20; --btn-ink:#fff; --badge-bg:#efece3; --badge-ink:#4b544c; --why:#404a43;
   --shadow:0 10px 30px rgba(24,42,32,.08);
   --display:"Fredoka",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   --body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 }
+[data-theme="dark"]{
+  --bg:#131a16; --ink:#ece7db; --card:#1d2620; --muted:#9aa79b; --line:#2e3a32;
+  --seg:#222b25; --btn:#2f6a4f; --btn-ink:#f4f1ea; --badge-bg:#2a332c; --badge-ink:#c3ccc3; --why:#b7c0b7;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+}
+[data-theme="dark"] .chip{background:color-mix(in srgb, var(--cat) 28%, var(--card))}
+[data-theme="dark"] .vtag{background:color-mix(in srgb, var(--cat) 24%, var(--card));color:color-mix(in srgb, var(--cat) 60%, #fff)}
+[data-theme="dark"] .supervision{background:color-mix(in srgb, var(--sv) 16%, var(--card))!important}
+[data-theme="dark"] .fav[aria-pressed="true"]{background:#3a2626;border-color:#5c3a3a}
+[data-theme="dark"] .hero{background:#222b25}
+
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.5}
 main{max-width:640px;margin:auto;padding:calc(16px + env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom))}
 
-/* ---- header + hero ---- */
-header{text-align:center;padding:6px 0 2px}
-h1{font-family:var(--display);font-weight:700;font-size:34px;line-height:1.02;letter-spacing:-.5px;margin:0}
+/* header + hero */
+header{text-align:center;padding:6px 0 2px;position:relative}
+.theme-toggle{position:absolute;top:2px;right:0;border:1px solid var(--line);background:var(--card);color:var(--ink);width:42px;height:42px;border-radius:12px;font-size:19px;cursor:pointer;line-height:1}
+h1{font-family:var(--display);font-weight:700;font-size:34px;line-height:1.02;letter-spacing:-.5px;margin:0;padding:0 46px}
 .tagline{color:var(--muted);font-size:14px;margin-top:4px;letter-spacing:.2px}
 .hero{position:relative;margin:16px 0 0;border-radius:20px;overflow:hidden;aspect-ratio:16/9;background:#d9d4c8}
 .hero img{width:100%;height:100%;object-fit:cover;display:block}
 
-/* ---- balance meter (signature) ---- */
+/* balance meter */
 .balance{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 14px 12px;margin-top:16px;box-shadow:var(--shadow)}
 .balance h2{font-family:var(--display);font-size:13px;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);margin:0 0 10px;font-weight:600}
 .bars{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;align-items:end;height:56px}
@@ -46,36 +69,36 @@ h1{font-family:var(--display);font-weight:700;font-size:34px;line-height:1.02;le
 .stat .n{font-family:var(--display);font-size:22px;font-weight:700;line-height:1}
 .stat .t{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
 
-/* ---- mode toggle ---- */
-.modes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:18px 0 4px;background:#e7e1d4;padding:5px;border-radius:14px}
-.mode{border:0;background:transparent;padding:11px;border-radius:10px;font-family:var(--display);font-weight:600;font-size:15px;color:var(--muted);cursor:pointer}
+/* mode toggle (three views) */
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:18px 0 4px;background:var(--seg);padding:5px;border-radius:14px}
+.mode{border:0;background:transparent;padding:11px 6px;border-radius:10px;font-family:var(--display);font-weight:600;font-size:15px;color:var(--muted);cursor:pointer}
 .mode.active{background:var(--card);color:var(--ink);box-shadow:0 2px 8px rgba(24,42,32,.1)}
 
-/* ---- filters ---- */
+/* filters */
 .filters{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
 .filters select{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card);font:inherit;color:var(--ink)}
 
-.primary{width:100%;border:0;border-radius:16px;padding:18px;font-family:var(--display);font-weight:700;font-size:19px;background:var(--ink);color:#fff;margin:16px 0 4px;cursor:pointer;letter-spacing:.2px}
+.primary{width:100%;border:0;border-radius:16px;padding:18px;font-family:var(--display);font-weight:700;font-size:19px;background:var(--btn);color:var(--btn-ink);margin:16px 0 4px;cursor:pointer;letter-spacing:.2px}
 .primary:active{transform:translateY(1px)}
 
-/* ---- activity card ---- */
+/* activity card */
 .card{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--cat,var(--ink));border-radius:18px;padding:20px;margin-top:16px;box-shadow:var(--shadow)}
 .reveal{animation:rise .32s ease both}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 .chip{display:inline-block;background:var(--tint,#eee);color:var(--cat,var(--ink));font-weight:700;font-size:12px;padding:5px 11px;border-radius:999px;letter-spacing:.3px}
 .card h3{font-family:var(--display);font-weight:700;font-size:26px;line-height:1.05;margin:10px 0 0}
-.fav{border:1px solid var(--line);background:var(--card);width:42px;height:42px;flex:none;border-radius:12px;font-size:19px;cursor:pointer;line-height:1}
+.fav{border:1px solid var(--line);background:var(--card);color:var(--ink);width:42px;height:42px;flex:none;border-radius:12px;font-size:19px;cursor:pointer;line-height:1}
 .fav[aria-pressed="true"]{background:#fdecec;border-color:#f2c9c9}
 .badges{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 4px}
-.badge{background:#efece3;border-radius:999px;padding:5px 10px;font-size:13px;color:#4b544c}
+.badge{background:var(--badge-bg);border-radius:999px;padding:5px 10px;font-size:13px;color:var(--badge-ink)}
 
 .supervision{margin:16px 0 4px;padding:12px 14px;border-radius:12px;border-left:4px solid var(--sv,#8a9);background:var(--svbg,#eef);font-size:14px}
 .supervision b{display:block;margin-bottom:2px}
 
 .label{font-family:var(--display);font-size:12px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);font-weight:600;margin-top:18px}
 .body{font-size:16px}
-.why{font-size:15px;color:#404a43;margin-top:6px}
+.why{font-size:15px;color:var(--why);margin-top:6px}
 .steps{padding:0;margin:8px 0 0;list-style:none;counter-reset:step}
 .steps li{counter-increment:step;display:grid;grid-template-columns:28px 1fr;gap:11px;margin:12px 0;line-height:1.45}
 .steps li:before{content:counter(step);display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--cat,var(--ink));color:#fff;font-weight:700;font-size:13px;font-family:var(--display)}
@@ -96,12 +119,12 @@ details[open] summary:after{content:" –"}
 .secondary{border:1.5px solid var(--ink);background:transparent;border-radius:13px;padding:13px;font-family:var(--display);font-weight:600;font-size:15px;cursor:pointer;color:var(--ink)}
 .secondary:active{transform:translateY(1px)}
 
-/* ---- session ---- */
+/* session */
 .time-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;margin-top:16px;box-shadow:var(--shadow)}
 .time-card h3{font-family:var(--display);font-size:22px;margin:0 0 6px}
 .time-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
 .custom{display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:10px}
-.custom input{min-width:0;padding:13px;border:1px solid var(--line);border-radius:12px;background:#fff;font:inherit}
+.custom input{min-width:0;padding:13px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font:inherit}
 .session-total{font-family:var(--display);font-size:24px;font-weight:700;margin:22px 0 2px}
 .session-item{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--cat,var(--ink));border-radius:16px;padding:16px 18px;margin-top:12px}
 .session-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
@@ -109,8 +132,31 @@ details[open] summary:after{content:" –"}
 .session-time{font-weight:700;white-space:nowrap;color:var(--muted)}
 .session-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}
 
+/* calendar */
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-top:16px}
+.cal-nav{border:1px solid var(--line);background:var(--card);color:var(--ink);width:42px;height:42px;border-radius:12px;font-size:18px;cursor:pointer}
+.cal-label{font-family:var(--display);font-weight:600;font-size:18px}
+.cal-dow{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:16px}
+.cal-dow div{text-align:center;font-size:11px;color:var(--muted);font-weight:700}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:6px}
+.cal-cell{aspect-ratio:1;border:1px solid var(--line);background:var(--card);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:2px;color:var(--ink);font:inherit;cursor:default}
+.cal-cell.empty{border:0;background:transparent}
+.cal-cell.has{cursor:pointer}
+.cal-cell.has:active{transform:scale(.96)}
+.cal-cell.sel{border-color:var(--ink);border-width:2px}
+.cal-cell.today .cal-num{background:var(--ink);color:var(--bg);border-radius:50%;width:22px;height:22px;display:grid;place-items:center}
+.cal-cell[disabled]{opacity:.5}
+.cal-num{font-size:13px;font-weight:600;line-height:1}
+.cal-dots{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;min-height:7px;max-width:100%}
+.cal-dot{width:6px;height:6px;border-radius:50%}
+.cal-summary{text-align:center;color:var(--muted);font-size:13px;margin-top:16px}
+.daycard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-top:14px;box-shadow:var(--shadow)}
+.daycard h3{font-family:var(--display);font-size:18px;margin:0 0 10px}
+.day-item{display:flex;align-items:center;gap:10px;margin:9px 0;font-size:15px}
+.day-item .d{width:9px;height:9px;border-radius:50%;flex:none}
+.day-item .c{color:var(--muted);font-size:13px;margin-left:auto;white-space:nowrap}
+
 .empty{color:var(--muted);font-size:14px;text-align:center;margin-top:14px}
-a.link{color:var(--ink)}
 
 @media (prefers-reduced-motion: reduce){
   *{scroll-behavior:auto!important}
@@ -123,6 +169,7 @@ a.link{color:var(--ink)}
 <body>
 <main>
 <header>
+  <button class="theme-toggle" id="themeToggle" aria-label="Switch color theme">☾</button>
   <h1>What Should We Do?</h1>
   <div class="tagline">Arya · seeking side quests</div>
   <div class="hero"><img src="arya-hero.jpg" width="1200" height="675" alt="Arya, ears up, ready for a quest"></div>
@@ -140,8 +187,9 @@ a.link{color:var(--ink)}
 </section>
 
 <div class="modes" role="tablist">
-  <button class="mode active" id="pickTab" role="tab" aria-selected="true">Pick one</button>
-  <button class="mode" id="planTab" role="tab" aria-selected="false">Plan a session</button>
+  <button class="mode active" id="pickTab" role="tab" aria-selected="true">Pick</button>
+  <button class="mode" id="planTab" role="tab" aria-selected="false">Plan</button>
+  <button class="mode" id="calTab" role="tab" aria-selected="false">Calendar</button>
 </div>
 
 <!-- PICK ONE -->
@@ -186,6 +234,19 @@ a.link{color:var(--ink)}
   </div>
   <div id="session" aria-live="polite"></div>
 </section>
+
+<!-- CALENDAR -->
+<section id="calPage" hidden>
+  <div class="cal-head">
+    <button class="cal-nav" id="calPrev" aria-label="Previous month">‹</button>
+    <div class="cal-label" id="calLabel"></div>
+    <button class="cal-nav" id="calNext" aria-label="Next month">›</button>
+  </div>
+  <div class="cal-dow"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>
+  <div class="cal-grid" id="calGrid"></div>
+  <p class="cal-summary" id="calSummary"></p>
+  <div id="calDetail" aria-live="polite"></div>
+</section>
 </main>
 
 <script src="activities.js"></script>
@@ -194,12 +255,12 @@ a.link{color:var(--ink)}
 const $ = id => document.getElementById(id);
 const K = { hist:"awsd.v7.history", recent:"awsd.v7.recent", liked:"awsd.v7.liked", base:"awsd.v7.base" };
 
-// ---- state (with one-time migration from the old v1–v6 keys) ----
+// ---- state (migrates once from the old v1–v6 keys) ----
 let history = load(K.hist, []);
 let recent  = load(K.recent, []);
 let liked   = new Set(load(K.liked, []));
 let base    = Number(localStorage.getItem(K.base));
-if (!localStorage.getItem(K.base)) {           // seed lifetime total from the old counter, once
+if (!localStorage.getItem(K.base)) {
   base = Number(localStorage.getItem("completed") || 0);
   localStorage.setItem(K.base, String(base));
 }
@@ -209,6 +270,19 @@ function save(){ localStorage.setItem(K.hist,JSON.stringify(history)); localStor
 const byId = id => ACTIVITIES.find(a => a.id === id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const dayKey = t => { const d=new Date(t); return d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate(); };
+
+// ---- theme ----
+const themeBtn = $("themeToggle");
+function applyTheme(t){
+  document.documentElement.setAttribute("data-theme", t);
+  themeBtn.textContent = t==="dark" ? "☀" : "☾";
+  themeBtn.setAttribute("aria-label", t==="dark" ? "Switch to light mode" : "Switch to dark mode");
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute("content", t==="dark" ? "#131a16" : "#17271f");
+}
+let theme = localStorage.getItem("awsd.theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+applyTheme(theme);
+themeBtn.onclick = () => { theme = theme==="dark" ? "light" : "dark"; localStorage.setItem("awsd.theme", theme); applyTheme(theme); };
 
 // ---- balance + streak header ----
 function renderHeader(){
@@ -222,13 +296,11 @@ function renderHeader(){
     const faded = n===0 ? ";opacity:.28" : "";
     return `<div class="bar"><div class="col" style="height:${h}px;background:${col}${faded}" title="${c}: ${n} this week"></div><div class="lbl">${c}</div></div>`;
   }).join("");
-
   const doneThisWeek = Object.values(counts).reduce((s,n)=>s+n,0);
   const least = CATEGORY_ORDER.slice().sort((a,b)=>counts[a]-counts[b])[0];
   $("nudge").innerHTML = doneThisWeek === 0
     ? "Nothing yet this week — pick a quest and get Arya started."
     : `Lightest on <b>${least}</b> lately. ${esc(CATEGORIES[least].blurb)}`;
-
   $("streakN").textContent = streak();
   $("totalN").textContent  = base + history.length;
   $("favN").textContent    = liked.size;
@@ -237,12 +309,12 @@ function streak(){
   if (!history.length) return 0;
   const days = new Set(history.map(h => dayKey(h.t)));
   let n = 0, d = new Date();
-  if (!days.has(dayKey(d))) d.setDate(d.getDate()-1);   // streak still counts if nothing done yet today
+  if (!days.has(dayKey(d))) d.setDate(d.getDate()-1);
   while (days.has(dayKey(d))) { n++; d.setDate(d.getDate()-1); }
   return n;
 }
 
-// ---- single render path (used by both Pick one and Plan a session) ----
+// ---- single render path (used by Pick one and Plan a session) ----
 function activityHTML(a, {compact=false}={}){
   const badges = [`${a.minutes} min`, a.where, a.food?"Treats":"No treats", a.level, a.who]
     .map(b => `<span class="badge">${esc(b)}</span>`).join("");
@@ -254,30 +326,23 @@ function activityHTML(a, {compact=false}={}){
     <div class="variation"><span class="vtag">EASIER</span><span>${esc(a.easier)}</span></div>
     <div class="variation"><span class="vtag">HARDER</span><span>${esc(a.harder)}</span></div>
     <div class="variation"><span class="vtag">SENIOR</span><span>${esc(a.senior)}</span></div></div>`;
-
-  const heart = liked.has(a.id) ? "♥" : "♡";
   const pressed = liked.has(a.id);
   const head = `<div class="card-top">
       <div><span class="chip">${esc(a.category)}</span><h3 id="pk-title">${esc(a.title)}</h3></div>
-      <button class="fav" data-fav="${a.id}" aria-pressed="${pressed}" aria-label="${pressed?'Remove from':'Add to'} Arya's favorites">${heart}</button>
+      <button class="fav" data-fav="${a.id}" aria-pressed="${pressed}" aria-label="${pressed?'Remove from':'Add to'} Arya's favorites">${pressed?"♥":"♡"}</button>
     </div>`;
-
   const supervision = `<div class="supervision" style="--sv:${svColor};--svbg:${svBg}">
       <b>${esc(a.ratingLabel)}</b>${esc(a.ratingNote)}</div>`;
-
   const core = `${supervision}
     <div class="label">You'll need</div><div class="body">${esc(a.gear)}</div>
     <div class="label">How to play</div><ol class="steps">${steps}</ol>`;
-
   const extras = compact
     ? `<details><summary>Why it works, tips &amp; variations</summary>
          <div class="why">${esc(a.why)}</div>${vary}${tips}</details>`
     : `<div class="label">Why it works</div><div class="why">${esc(a.why)}</div>
        <details><summary>Make it easier, harder, or senior-friendly</summary>${vary}</details>
        <details><summary>Pro tips</summary>${tips}</details>`;
-
   const meta = `<div class="meta"><div>${esc(a.level)}<small>Level</small></div><div>${esc(a.who)}<small>Who</small></div><div>${a.minutes} min<small>Time</small></div></div>`;
-
   return { head, badges, core, extras, meta };
 }
 
@@ -292,7 +357,7 @@ function filtered(){
   return x;
 }
 function weightedPick(pool){
-  const w = pool.map(a => liked.has(a.id) ? 3 : 1);   // favorites come up more often
+  const w = pool.map(a => liked.has(a.id) ? 3 : 1);
   let r = Math.random() * w.reduce((s,x)=>s+x,0);
   for (let i=0;i<pool.length;i++){ r -= w[i]; if (r<0) return pool[i]; }
   return pool[pool.length-1];
@@ -361,7 +426,61 @@ function finishSession(chosen){
   $("session").innerHTML = `<div class="time-card"><h3>Nice work.</h3><p class="body">That's ${chosen.length} logged for Arya — a good mix of work and rest.</p></div>`;
 }
 
-// ---- favorites (event delegation so it works in both views) ----
+// ---- Calendar ----
+let calYear, calMonth, calMap = {};
+function initCal(){ const d = new Date(); calYear = d.getFullYear(); calMonth = d.getMonth(); }
+function renderCalendar(){
+  calMap = {};
+  history.forEach(h => {
+    const d = new Date(h.t);
+    if (d.getFullYear()===calYear && d.getMonth()===calMonth){
+      const day = d.getDate(); (calMap[day] = calMap[day] || []).push(h);
+    }
+  });
+  $("calLabel").textContent = new Date(calYear, calMonth, 1)
+    .toLocaleDateString(undefined, {month:"long", year:"numeric"});
+  const firstDow = new Date(calYear, calMonth, 1).getDay();
+  const days = new Date(calYear, calMonth+1, 0).getDate();
+  const today = new Date();
+  const isThisMonth = today.getFullYear()===calYear && today.getMonth()===calMonth;
+  let cells = "";
+  for (let i=0;i<firstDow;i++) cells += `<div class="cal-cell empty"></div>`;
+  for (let day=1; day<=days; day++){
+    const items = calMap[day] || [];
+    const cats = [...new Set(items.map(x=>x.cat))];
+    const dots = cats.map(c => `<span class="cal-dot" style="background:${CATEGORIES[c].color}"></span>`).join("");
+    const cls = ["cal-cell", isThisMonth && today.getDate()===day ? "today":"", items.length ? "has":""].filter(Boolean).join(" ");
+    cells += `<button class="${cls}" ${items.length?`data-day="${day}"`:"disabled"}>
+        <span class="cal-num">${day}</span><span class="cal-dots">${dots}</span></button>`;
+  }
+  $("calGrid").innerHTML = cells;
+  const total = Object.values(calMap).reduce((s,a)=>s+a.length,0);
+  $("calSummary").textContent = total
+    ? `${total} ${total===1?"activity":"activities"} this month`
+    : "Nothing logged this month yet.";
+  $("calDetail").innerHTML = "";
+}
+function showDay(day){
+  const items = calMap[day] || [];
+  const label = new Date(calYear, calMonth, day).toLocaleDateString(undefined, {weekday:"long", month:"long", day:"numeric"});
+  const rows = items.map(h => {
+    const a = byId(h.id); const c = CATEGORIES[h.cat].color;
+    const time = new Date(h.t).toLocaleTimeString(undefined, {hour:"numeric", minute:"2-digit"});
+    return `<div class="day-item"><span class="d" style="background:${c}"></span><span>${esc(a ? a.title : "Activity")}</span><span class="c">${esc(h.cat)} · ${time}</span></div>`;
+  }).join("");
+  $("calDetail").innerHTML = `<div class="daycard"><h3>${esc(label)}</h3>${rows}</div>`;
+  $("calDetail").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+$("calPrev").onclick = () => { if (--calMonth < 0){ calMonth=11; calYear--; } renderCalendar(); };
+$("calNext").onclick = () => { if (++calMonth > 11){ calMonth=0; calYear++; } renderCalendar(); };
+$("calGrid").addEventListener("click", e => {
+  const cell = e.target.closest(".cal-cell.has"); if (!cell) return;
+  $("calGrid").querySelectorAll(".sel").forEach(c => c.classList.remove("sel"));
+  cell.classList.add("sel");
+  showDay(Number(cell.dataset.day));
+});
+
+// ---- favorites (delegated so it works in every view) ----
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-fav]"); if (!b) return;
   const id = Number(b.dataset.fav);
@@ -373,14 +492,25 @@ document.addEventListener("click", e => {
   save(); renderHeader();
 });
 
-// ---- mode switching ----
-function setMode(plan){
-  $("pickPage").hidden = plan; $("planPage").hidden = !plan;
-  $("pickTab").classList.toggle("active",!plan); $("planTab").classList.toggle("active",plan);
-  $("pickTab").setAttribute("aria-selected",!plan); $("planTab").setAttribute("aria-selected",plan);
+// ---- view switching ----
+const views = {
+  pick: {tab:"pickTab", page:"pickPage"},
+  plan: {tab:"planTab", page:"planPage"},
+  cal:  {tab:"calTab",  page:"calPage"},
+};
+let calReady = false;
+function setView(name){
+  for (const [k,v] of Object.entries(views)){
+    const on = k===name;
+    $(v.page).hidden = !on;
+    $(v.tab).classList.toggle("active", on);
+    $(v.tab).setAttribute("aria-selected", on);
+  }
+  if (name==="cal"){ if(!calReady){ initCal(); calReady=true; } renderCalendar(); }
 }
-$("pickTab").onclick = () => setMode(false);
-$("planTab").onclick = () => setMode(true);
+$("pickTab").onclick = () => setView("pick");
+$("planTab").onclick = () => setView("plan");
+$("calTab").onclick  = () => setView("cal");
 $("pickBtn").onclick = pick;
 document.querySelectorAll(".timepick").forEach(b => b.onclick = () => buildSession(b.dataset.min));
 $("customGo").onclick = () => buildSession($("customMin").value);

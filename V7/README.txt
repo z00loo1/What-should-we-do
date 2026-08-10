@@ -1,4 +1,4 @@
-WHAT SHOULD WE DO? — Arya enrichment app (v7)
+WHAT SHOULD WE DO? — Arya enrichment app (v8)
 
 FILES
 - index.html                 app (UI + logic)
@@ -53,3 +53,23 @@ Polish
 - Manifest icons + apple-touch-icon; hero image re-compressed; layout-shift guarded.
 - Friendly display font (Fredoka) with a full system-font fallback, so it still looks
   right offline.
+
+WHAT CHANGED FROM V7
+
+Calendar view
+- New third tab, "Calendar." Shows a month grid where each day carries a colored dot
+  for every type of activity Arya did that day (using the same five category colors).
+  Today is circled; tap any day with activity to see the list of what she did and when.
+  Prev/next arrows move between months. Built entirely from the history the app already
+  records, so past days you logged in v7 show up automatically.
+
+Dark mode
+- A sun/moon button in the top-right corner toggles light and dark. The choice is saved,
+  and the first time the app opens it follows the phone's system setting. The theme is
+  applied before the page paints, so there's no flash of the wrong mode on launch.
+
+Notes
+- Same files as v7 (only index.html and sw.js changed); the service worker cache is
+  bumped to arya-v8 so the update rolls out on next launch.
+- Her existing data — streak, favorites, totals, and history — carries straight over;
+  nothing is reset.
