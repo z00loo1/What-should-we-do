@@ -1,4 +1,4 @@
-WHAT SHOULD WE DO? — Arya enrichment app (v10)
+WHAT SHOULD WE DO? — Arya enrichment app (v12)
 
 FILES
 - index.html                 app (UI + logic)
@@ -88,3 +88,31 @@ Fix
 - The type legend was showing by default and the "?" button did nothing: a CSS rule was
   overriding the hide. The legend now starts collapsed and the "?" (and each label)
   opens and closes it correctly. Only index.html and sw.js changed (cache -> arya-v10).
+
+WHAT CHANGED FROM V10
+
+Tailored to Arya (sound 6-year-old German Shepherd, beginner handler)
+- All five type templates were rewritten with breed-aware "why it works" copy that speaks
+  to a Shepherd's working/herding brain, scent heritage, drive, and off-switch. Kept at a
+  beginner reading level. Because she's sound, joint talk is limited to one light warm-up
+  note on Play rather than heavy restrictions.
+- Every card now shows a short "For a German Shepherd" note. The 50 activities and their
+  step-by-step instructions are unchanged; the tailoring is in the framing on each card.
+
+Google Sheet logging (needs your URL to turn on)
+- The app can POST each completed card (timestamp, card, type) to a Google Sheet you own,
+  so you can see if and when she's using it and which cards. The sending code ships in this
+  version but is OFF until you set LOG_URL.
+- To enable: create a Sheet, add the Apps Script doPost from the chat, deploy it as a Web
+  App (Execute as: Me, Access: Anyone), and paste the /exec URL into the LOG_URL constant
+  near the top of the <script> in index.html (or send it over and it gets filled in).
+- Logging is non-blocking and fire-and-forget: it never slows down a tap and fails silently
+  offline. Only index.html, activities.js, and sw.js changed (cache -> arya-v11).
+
+WHAT CHANGED FROM V11
+
+- Google Sheet logging is now ON: LOG_URL is set to your deployed Apps Script web app, so
+  each completed card posts (timestamp, card, type) to your Sheet. Only index.html and
+  sw.js changed (cache -> arya-v12).
+- If you ever redeploy the script and the URL changes, update the LOG_URL line near the top
+  of the <script> in index.html.

@@ -109,6 +109,8 @@ h1{font-family:var(--display);font-weight:700;font-size:34px;line-height:1.02;le
 .label{font-family:var(--display);font-size:12px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);font-weight:600;margin-top:18px}
 .body{font-size:16px}
 .why{font-size:15px;color:var(--why);margin-top:6px}
+.gsd{margin-top:14px;font-size:14px;line-height:1.45;border-left:3px solid var(--cat,var(--ink));padding-left:12px;color:var(--why)}
+.gsd b{display:block;color:var(--ink);font-family:var(--display);font-size:12px;text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px;font-weight:600}
 .steps{padding:0;margin:8px 0 0;list-style:none;counter-reset:step}
 .steps li{counter-increment:step;display:grid;grid-template-columns:28px 1fr;gap:11px;margin:12px 0;line-height:1.45}
 .steps li:before{content:counter(step);display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--cat,var(--ink));color:#fff;font-weight:700;font-size:13px;font-family:var(--display)}
@@ -282,6 +284,21 @@ function load(k, d){ try{ return JSON.parse(localStorage.getItem(k)) ?? d; }catc
 function save(){ localStorage.setItem(K.hist,JSON.stringify(history)); localStorage.setItem(K.recent,JSON.stringify(recent)); localStorage.setItem(K.liked,JSON.stringify([...liked])); }
 
 const byId = id => ACTIVITIES.find(a => a.id === id);
+
+// ---- optional: log each completion to your Google Sheet ----
+// Paste your Apps Script /exec URL between the quotes to turn this on. Empty = off (no-op).
+const LOG_URL = "https://script.google.com/macros/s/AKfycbzgaxxL7u0HrjX3X3s2YfEkkp8fJlVmW92HAA2gwyYe9_OOB-N_sAyZUx1E0WuxWhRDRw/exec";
+function logEvent(id, cat){
+  if (!LOG_URL) return;
+  const a = byId(id);
+  try{
+    fetch(LOG_URL, {
+      method:"POST", mode:"no-cors", keepalive:true,
+      headers:{ "Content-Type":"text/plain;charset=utf-8" }, // text/plain avoids a CORS preflight to Apps Script
+      body: JSON.stringify({ t:new Date().toISOString(), id, title:a?a.title:"", cat })
+    }).catch(()=>{});
+  }catch(e){}
+}
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const dayKey = t => { const d=new Date(t); return d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate(); };
 
@@ -368,10 +385,11 @@ function activityHTML(a, {compact=false}={}){
   const core = `${supervision}
     <div class="label">You'll need</div><div class="body">${esc(a.gear)}</div>
     <div class="label">How to play</div><ol class="steps">${steps}</ol>`;
+  const gsd = `<div class="gsd"><b>🐾 For a German Shepherd</b>${esc(a.gsd)}</div>`;
   const extras = compact
     ? `<details><summary>Why it works, tips &amp; variations</summary>
-         <div class="why">${esc(a.why)}</div>${vary}${tips}</details>`
-    : `<div class="label">Why it works</div><div class="why">${esc(a.why)}</div>
+         <div class="why">${esc(a.why)}</div>${gsd}${vary}${tips}</details>`
+    : `<div class="label">Why it works</div><div class="why">${esc(a.why)}</div>${gsd}
        <details><summary>Make it easier, harder, or senior-friendly</summary>${vary}</details>
        <details><summary>Pro tips</summary>${tips}</details>`;
   const meta = `<div class="meta"><div>${esc(a.level)}<small>Level</small></div><div>${esc(a.who)}<small>Who</small></div><div>${a.minutes} min<small>Time</small></div></div>`;
@@ -415,6 +433,7 @@ function show(a){
 }
 function complete(id, cat){
   history.push({ t:new Date().toISOString(), id, cat });
+  logEvent(id, cat);
   save(); renderHeader();
 }
 
@@ -453,7 +472,7 @@ function buildSession(budget){
   $("session").scrollIntoView({behavior:"smooth", block:"start"});
 }
 function finishSession(chosen){
-  chosen.forEach(a => history.push({ t:new Date().toISOString(), id:a.id, cat:a.category }));
+  chosen.forEach(a => { history.push({ t:new Date().toISOString(), id:a.id, cat:a.category }); logEvent(a.id, a.category); });
   save(); renderHeader();
   $("session").innerHTML = `<div class="time-card"><h3>Nice work.</h3><p class="body">That's ${chosen.length} logged for Arya — a good mix of work and rest.</p></div>`;
 }
